@@ -1,0 +1,29 @@
+{
+  "name": "node-with-jwt",
+  "version": "1.0.0",
+  "description": "Sample of App node with JWT and MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/flaviomarques85/node-with-jwt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/flaviomarques85/node-with-jwt/issues"
+  },
+  "homepage": "https://github.com/flaviomarques85/node-with-jwt#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.7",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.13",
+    "yup": "^0.32.9"
+  }
+}
