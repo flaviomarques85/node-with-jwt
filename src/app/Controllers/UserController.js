@@ -4,10 +4,10 @@ const yup =  require('yup')
 
 class UserController {
     /**
-     * Rota para mostrar o usuario 
+     * Rota para mostrar os usuarios  
      */
     async show(req, res){
-        let users = ['Celio', 'Leticia', 'Andrezza']
+        let users = await User.find({})
         return res.status(200).json({
             error:false,
             users
@@ -23,9 +23,9 @@ class UserController {
          * validacao dos dados pasados na request com o pacote YUP schema.
          */
         let schema =  yup.object().shape({
-            name: yup.string().required(),
-            email: yup.string().email().required(),
-            password: yup.string().required()
+                name: yup.string().required(),
+                email: yup.string().email().required(),
+                password: yup.string().required()
         })
         /**
          * Caso os dados nao passe na validação será retornado 
@@ -68,6 +68,73 @@ class UserController {
                 massage: "Usuario criando com sucesso!"
             })
         })
+        
+    }
+    /**
+     * Atuaização de password de usuario.
+     * valida autenticacao via token no middleware da request
+     */
+    async update(req, res){
+        try {
+            /**
+             * recupera id passado via paramentro na URL
+             */
+            const  { id } = req.query
+            if(id){
+                /**
+                 * consulta se o usuario do id correspondente existe na base de dados
+                 */
+                const userExist = await User.findOne({_id : id})
+
+                if(userExist){
+                    /**
+                     * caso o usuario esteja ativo recupera o novo password para tratativa e persistencia.
+                     */
+                    let { newPassword } = req.body
+                    if(newPassword && newPassword.length >= 6){
+                        /**
+                         * faz a criptaçao do password
+                         */
+                        newPassword = await bcrypt.hash(newPassword, 8)
+                        /**
+                         * realiza updata na base. 
+                         */
+                        await User.updateOne({ _id: id }, { $set : {password : newPassword }}, (error, retono) => {
+                            if (error){
+                                throw error
+                            }else { 
+
+                                console.log("--> Retorno: ",retono)
+                                return res.status(200).json({
+                                    error: false,
+                                    massage: "Usuario atualizado com suscesso!"
+                                })
+                            }
+                        })
+                    }else{
+                        return res.status(400).json({
+                            error: true,
+                            massage: "Obrigatorio informar o novo password com 6 caracter no minimo!"  
+                        })
+                    }
+
+                }else{
+                    return res.status(400).json({
+                        error: true,
+                        massage: "Usuario nao encontrado!"  
+                    })
+                }
+
+
+            }else{
+                return res.status(400).json({
+                    error: true,
+                    massage: "Obrigatorio informar o id do usuario"  
+                })
+            }
+        } catch (error) {
+            console.log(error)
+        }
         
     }
 }

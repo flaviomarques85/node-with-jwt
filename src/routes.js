@@ -10,5 +10,6 @@ const routes =  new Router()
 routes.post("/user",  UserController.store)
 routes.get("/user", AuthMiddleware, UserController.show)
 routes.post("/login", LoginController.index)
+routes.put("/user", AuthMiddleware, UserController.update)
 
 module.exports = routes
